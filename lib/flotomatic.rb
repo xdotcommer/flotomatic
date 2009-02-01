@@ -1,1 +1,2 @@
 # Flotomatic
+require 'flot'
