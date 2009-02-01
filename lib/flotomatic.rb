@@ -1,2 +1,0 @@
-# Flotomatic
-require 'flot'
