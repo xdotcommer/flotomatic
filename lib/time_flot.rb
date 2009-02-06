@@ -1,3 +1,7 @@
+# Author::    Michael Cowden
+# Copyright:: MigraineLiving.com
+# License::   Distributed under the same terms as Ruby
+
 class TimeFlot < Flot
   JS_TIME_MULTIPLIER = 1000
   BAR_WIDTH          = 1.day * JS_TIME_MULTIPLIER

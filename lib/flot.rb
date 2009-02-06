@@ -1,15 +1,27 @@
+# Author::    Michael Cowden
+# Copyright:: MigraineLiving.com
+# License::   Distributed under the same terms as Ruby
+
+# This class acts as a ruby wrapper for the flot javascript object
+# This is the class used in your model / controller to setup your data sets.
+# It is then the object used in the <%= flot_graph %> helper method.
+#
 class Flot
   CANVAS_DEFAULT_HTML_OPTIONS = {:style => "height: 300px"}
   attr_accessor :data, :options, :placeholder, :html_options
   alias  :canvas :placeholder
   alias  :canvas= :placeholder=
 
-  #TODO: :tick_formatter => enum / hash or a mapping function
-  #     :tick_formatter => {1 => "Mon", 2 => "Tue", ...} OR if an x or y is a string/sym
-  #     consider auto conversion --> a TotalFlot? or total_for(@collection, x, y)
-  #TODO: define callbacks - set and clear selection, binding plotselected, etc.
-  #TODO: custom functions for ticks and such
-
+  
+  # The flot object can be initialized with either a block or a hash of options
+  # The canvas and placeholder are used interchangeably and is provided as an optional first argument for convenience
+  # Examples:
+  # 
+  # 
+  #
+  # TODO: :tick_formatter => enum / hash or a mapping function, also :tick_formatter => {1 => "Mon", 2 => "Tue", ...} OR if an x or y is a string/sym consider auto conversion --> a TotalFlot? or total_for(@collection, x, y)
+  # TODO: define callbacks - set and clear selection, binding plotselected, etc.
+  # TODO: custom functions for ticks and such
   def initialize(canvas = nil, html_opts = {})
     @collection_filter = nil
     returning(self) do |flot|

@@ -1,8 +1,9 @@
 Description:
-    Explain the generator
+    Copies the css and javascript files into the public directory of your project
 
 Example:
-    ./script/generate flotomatic Thing
+    ./script/generate flotomatic
 
     This will create:
-        what/will/it/create
+        public/javascripts/flotomatic.js
+		public/stylesheets/flotomatic.css

@@ -1,4 +1,3 @@
-# Include hook code here
 require 'flot'
 require 'time_flot'
 

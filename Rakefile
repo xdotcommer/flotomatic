@@ -19,3 +19,8 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
   rdoc.rdoc_files.include('app/helpers/*.rb')
 end
+
+desc 'Copy the necessary css and javascript files into your project.'
+task :install do
+  system "ruby script/generate flotomatic"
+end

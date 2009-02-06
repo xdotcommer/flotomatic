@@ -1,4 +1,47 @@
+# Author::    Michael Cowden
+# Copyright:: MigraineLiving.com
+# License::   Distributed under the same terms as Ruby
+
+=begin rdoc
+== Flot Helper Methods
+The following example sets up the proper javascript / stylesheet includes,
+then creates a div for selecting specific data sets to display (dynamically).
+
+flot_canvas creates a plot canvas with an id of "graph" and flot_graph uses
+the @flot (Flot object) to provide the data and other preferences in plotting
+on the "graph" canvas.
+
+Within the flot_graph block, flot_plot does the actual plotting of the graph,
+while flot_tooltip provides a tooltip / hover mouse over for each datapoint on
+the graph.
+
+flot_overview just creates the div to hold the smaller the zoom in / out graph.
+
+== Example
+  <%= flot_includes %>
+
+	<h2>Graph the following items</h2>
+  <div class='flot_dataset_picker'>
+  	<%= flot_selections %>
+  </div>
+
+  <h2>My Graph</h2>
+  <%= flot_canvas("graph") %>
+
+  <h2>Zoom In / Out</h2>
+  <%= flot_overview("asdflkjasdf") %>
+
+  <% flot_graph("graph", @flot) do %>
+  	<%= flot_plot(:dynamic => true, :overview => true) %>
+  	<%= flot_tooltip %>
+  <% end %>
+=end
 module FlotHelper
+  
+  # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
+  #
+  # TODO: jrails include necessary???
+  #
   def flot_includes
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
@@ -7,6 +50,12 @@ module FlotHelper
     EOJS
   end
   
+  # Creates the canvas div:
+  #
+  #   flot_canvas("graph")    # creates a canvas div with an id of "graph"
+  #   flot_canvas(@flot)      # creates a canvas div with an id of @flot.placeholder (canvas)
+  #                           # (along with @flot's html_options).  div's class is 'flot_canvas' by default
+  #
   def flot_canvas(arg, options = {})
     if arg.is_a? Flot
       content_tag :div, "", options.merge(arg.html_options.merge(:id => arg.placeholder, :class => 'flot_canvas'))
@@ -15,6 +64,12 @@ module FlotHelper
     end
   end
   
+  # Creates a div to contain the selection checkboxes (to pick the datasets to be display dynamically)
+  #
+  #   flot_selections(:id => 'flot_choices', :class => 'selectiony')  # :id is 'flot_choices' by default
+  #
+  # TODO: Should take html_options
+  #
   def flot_selections(options = {})
     # choices = flot.data.map do |dataset| 
     #   label = content_tag :label, dataset[:label], :for => dataset[:label]
@@ -24,12 +79,28 @@ module FlotHelper
     content_tag :div, '', options.merge(:id => "flot_choices")
   end
   
+  # Creates a ready function that creates a new Flotomatic object (Object-oriented flot wrapper)
+  # Takes a block which can contain Javascript code and/or calls to flotomatic helper methods
+  #
+  # Using Helpers
+  #   <% flot_graph("graph", @flot) do %>
+  #     // plot the graph
+  #     <%= flot_plot(:dynamic => true, :overview => true) %>
+  #   <% end %>
+  #
+  # Using your own Javascript
+  #   <% flot_graph("graph", @flot) do %>
+  #     // any javascript code you want
+  #     // with access to the flotomatic variable
+  #   <% end %>
+  #
   def flot_graph(placeholder, flot, &block)
     graph = javascript_tag <<-EOJS
       $(function() {
         var data        = #{flot.data.to_json};
         var options     = #{flot.options.to_json};
         var flotomatic  = new Flotomatic('#{placeholder}', data, options);
+        
         // Custom Javascript provided in block to flot_graph
         #{capture(&block) if block_given?}
       });
@@ -39,6 +110,12 @@ module FlotHelper
     concat graph, block.binding
   end
   
+  # Plot the actual graph (to be called within the flot_graph block)
+  #
+  # Options:
+  #   :dynamic => true    # use this option if you are creating a dynamic plot with flot_selections
+  #   :overivew => true   # use this option if you want to zoom in & out from a flot_overview
+  #
   def flot_plot(options = {:dynamic => false, :overview => false})
     return <<-EOJS
       #{options[:dynamic] ? "flotomatic.graphDynamic();" : "flotomatic.graph();"}
@@ -46,14 +123,21 @@ module FlotHelper
     EOJS
   end
   
+  # Create the small overview div for zooming in and out
+  #
   def flot_overview(text = '')
     content_tag(:div, text, :id => 'flot_overview', :class => 'flot_overview')
   end
   
-  
-#  def flot_plot(placeholder, flot, data, options)
-
+  # Register a tooltip for data points
+  #
+  #   <%= flot_tooltip %>     # use the default tooltip
+  #   <% flot_tooltip do %>   # use custom content in the tooltip
+  #     My Mouseover Message!  // could use javascript here to access the flotomatic variable
+  #   <% end %>
+  #
   # TODO: specs, different defaults based on time axis
+  #
   def flot_tooltip(&block)
     start, finish = "flotomatic.createTooltip(", ");"
     if block_given?
