@@ -39,15 +39,12 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
 module FlotHelper
   
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
-  #--
-  # TODO: jrails include necessary???
-  #++
   #
   def flot_includes
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
   	  <!--[if IE]> #{javascript_include_tag('excanvas.pack.js')} </script><![endif]-->
-      #{javascript_include_tag('jquery', 'jquery-ui', 'jrails', 'jquery.flot.pack.js', 'flotomatic')}
+      #{javascript_include_tag('jquery', 'jquery-ui', 'jquery.flot.pack.js', 'flotomatic')}
     EOJS
   end
   
