@@ -11,13 +11,13 @@ function Flotomatic(placeholder, data, options) {
 
 Flotomatic.prototype = {
 	createTooltip: function(tooltipFormatter) {
-		var placeholder = $(this.placeholder),
-		tooltip         = $(this.tooltip),
+		var placeholder = jQuery(this.placeholder),
+		tooltip         = jQuery(this.tooltip),
 		previousPoint   = null;
 
 
 		function showTooltip(x, y, contents) {
-			$('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
+			jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
 				{top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
 		}
 
@@ -29,7 +29,7 @@ Flotomatic.prototype = {
 		}
 
 		placeholder.bind("plothover", this.tooltip, function(event, pos, item) {
-			var tooltip = $(event.data);
+			var tooltip = jQuery(event.data);
 
 			if (item) {
 				if (previousPoint != item.datapoint) {
@@ -53,30 +53,30 @@ Flotomatic.prototype = {
 		var options = initialOptions;
 		
 		if (zoom)
-			options = $.extend(true, {}, options, { selection: { mode: "x" }, xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }});
+			options = jQuery.extend(true, {}, options, { selection: { mode: "x" }, xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }});
 		
-		return $.plot(placeholder, data, options);
+		return jQuery.plot(placeholder, data, options);
 	},
 
 	graph: function(overview, dynamic) {
-		var placeholder = $(this.placeholder);
+		var placeholder = jQuery(this.placeholder);
 
 		this.plot = this.draw(placeholder, this.data, this.options);
 	},
 
 	graphDynamic: function() {
-		var placeholder = $(this.placeholder),
-			choices     = $(this.choices),
+		var placeholder = jQuery(this.placeholder),
+			choices     = jQuery(this.choices),
 			options     = this.options,
 			data        = this.data,
 			i        	= 0;
 
-		$.each(data, function(key, val) {
+		jQuery.each(data, function(key, val) {
 			val.color = i;
 			++i;
 		});
 
-		$.each(data, function(key, val) {
+		jQuery.each(data, function(key, val) {
 			choices.append(choiceFormatter(key, val));
 		});
 
@@ -86,14 +86,14 @@ Flotomatic.prototype = {
 			var set = [];
 
 			choices.find("input:checked").each(function () {
-				var key = $(this).attr("name");
+				var key = jQuery(this).attr("name");
 				
 				if (key && data[key])
 					set.push(data[key]);
 			});
 
 			if (set.length > 0)
-				this.plot = $.plot(placeholder, set, options);
+				this.plot = jQuery.plot(placeholder, set, options);
 		}
 
 		function choiceFormatter(key, val) {
@@ -104,11 +104,11 @@ Flotomatic.prototype = {
 	},
 
 	graphOverview: function() {
-		var overview        = $(this.overview),
-			placeholder 	= $(this.placeholder),
+		var overview        = jQuery(this.overview),
+			placeholder 	= jQuery(this.placeholder),
 			plot            = this.plot;
 
-		this.overviewPlot = $.plot(overview, this.data, {
+		this.overviewPlot = jQuery.plot(overview, this.data, {
 			legend: false, 
 			shadowSize: 0, 
 			xaxis: { ticks: [], mode: "time" }, 
@@ -118,7 +118,7 @@ Flotomatic.prototype = {
 
 		placeholder.bind("plotselected", {that:this}, function (event, ranges) {
 			var that   		= event.data.that,
-				placeholder = $(that.placeholder);
+				placeholder = jQuery(that.placeholder);
 
 			that.plot = that.draw(placeholder, that.data, that.options, ranges, false, true);
 			that.overviewPlot.setSelection(ranges, true);
