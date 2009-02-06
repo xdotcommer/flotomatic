@@ -22,5 +22,7 @@ end
 
 desc 'Copy the necessary css and javascript files into your project.'
 task :install do
-  system "ruby script/generate flotomatic"
+  directory = File.dirname(__FILE__)
+  generate  = File.join(directory, '..', '..', '..', 'script', 'generate')
+  system "ruby #{generate} flotomatic"
 end
