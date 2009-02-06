@@ -20,7 +20,7 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
 == Example
   <%= flot_includes %>
 
-	<h2>Graph the following items</h2>
+  <h2>Graph the following items</h2>
   <div class='flot_dataset_picker'>
   	<%= flot_selections %>
   </div>
@@ -39,8 +39,9 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
 module FlotHelper
   
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
-  #
+  #--
   # TODO: jrails include necessary???
+  #++
   #
   def flot_includes
     return <<-EOJS
@@ -67,8 +68,9 @@ module FlotHelper
   # Creates a div to contain the selection checkboxes (to pick the datasets to be display dynamically)
   #
   #   flot_selections(:id => 'flot_choices', :class => 'selectiony')  # :id is 'flot_choices' by default
-  #
+  #--
   # TODO: Should take html_options
+  #++
   #
   def flot_selections(options = {})
     # choices = flot.data.map do |dataset| 
@@ -135,8 +137,9 @@ module FlotHelper
   #   <% flot_tooltip do %>   # use custom content in the tooltip
   #     My Mouseover Message!  // could use javascript here to access the flotomatic variable
   #   <% end %>
-  #
+  #--
   # TODO: specs, different defaults based on time axis
+  #++
   #
   def flot_tooltip(&block)
     start, finish = "flotomatic.createTooltip(", ");"

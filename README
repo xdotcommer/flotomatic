@@ -8,7 +8,7 @@ Flotomatic was originally developed for graphing migraine histories on http://Mi
 
 === Controller
 
-  @flot = Flot.new('graph') do
+  @flot = TimeFlot.new('graph') do |f|
     f.bars
     f.grid :hoverable => true
     f.selection :mode => "xy"
@@ -43,5 +43,41 @@ Flotomatic was originally developed for graphing migraine histories on http://Mi
   	<%= flot_tooltip %>
   <% end %>
 
+== Flotomatic Javascript Reference
+
+Within the <% flot_graph %> block you will have access to the <tt>flotomatic</tt> variable.
+
+The flotomatic variable is created with the id of the canvas div, the data, and options supplied through the Flot object passed in to the <tt>flot_graph</tt> call.  For instance:
+
+  <% flot_graph("canvas", @flot) %> 
+
+  // Results in the following:
+  var flotomatic = new Flotomatic("canvas", @flot.data, @flot.options)
+
+=== Flotomatic methods
+
+Plotting Methods
+  // actually draws the plot with $.plot
+  draw: function(placeholder, data, initialOptions, ranges, dynamic, zoom)
+
+  // calls draw & sets flotomatic.plot to the returned plot handle 
+  graph: function(overview, dynamic)
+
+  // dynamically graphs with choice input checkboxes for each dataset in flotomatic.data
+  graphDynamic: function()
+
+  // plots the overview (zoom in / out) graph
+  graphOverview: function()
+
+Tooltip Methods
+  createTooltip: function(tooltipFormatter)
+
+  // default tooltipFormatter
+  tooltipFormatter: function(item) {
+  	var date 	 = new Date(item.datapoint[0]),
+  		label    = item.series.label;
+
+  	return label + ": " + item.datapoint[1] + " on " + (date.getMonth() + 1) + "/" + date.getDate() + "</a>";
+  }
 
 Copyright (c) 2009 Michael Cowden, released under the MIT license
