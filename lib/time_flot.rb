@@ -6,6 +6,18 @@
 == TimeFlot
 
 The TimeFlot class provides for a graph of values over time.  See Flot for more details.
+
+Usage:
+  TimeFlot.new('graph') do |f|
+    f.bars
+    f.grid :hoverable => true
+    f.selection :mode => "xy"
+    f.filter {|collection| collection.select {|j| j.entry_date < Date.parse("7/8/2007") }}
+    f.series_for("Stress", @journals, :x => :entry_date, :y => :stress_rating)
+    f.series_for("Hours of Sleep", @journals, :x => :entry_date, :y => :hours_of_sleep)
+    f.series_for("Restful Night?", @journals, :x => :entry_date, :y => lambda {|record| record.restful_night ? 5 : 0 }, :options => {:points => {:show => true}, :bars => {:show => false}})
+  end
+
 =end
 class TimeFlot < Flot
   JS_TIME_MULTIPLIER = 1000
