@@ -4,6 +4,10 @@ Flotomatic is a Rails wrapper around the flot javascript graphing library.
 
 Flotomatic was originally developed for graphing migraine histories on http://MigraineLiving.com.
 
+Known issues:
+* Zooming in / out with overview plot only works after zooming in with the main plot one initial time
+* When selecting datasets using the flot_selections div, the plot zoom is lost... it zooms all the way out
+
 == Installation
 
 To install the flotomatic plugin:
