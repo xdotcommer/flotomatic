@@ -1,14 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'spec'
-require 'spec/rails'
-require 'activesupport'
-require 'actionpack'
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'flot')
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'time_flot')
-require File.join(File.dirname(__FILE__), '..', '..', 'app', 'helpers', 'flot_helper')
+require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
-describe FlotHelper do
-  
+describe FlotHelper do  
   before(:each) do
     @class       = "stylin"
     @placeholder = "placeholder"
