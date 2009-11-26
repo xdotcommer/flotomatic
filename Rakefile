@@ -6,9 +6,13 @@ desc 'Default: run unit tests.'
 task :default => :spec
 
 desc 'Test the flotomatic plugin.'
-Spec::Rake::SpecTask.new do |t|
-  t.spec_files = FileList['spec/lib/*_spec.rb'] + FileList['spec/helper/*_spec.rb']
+task :spec do
+  system "spec spec/lib/*_spec.rb"
+  system "spec spec/helper/*_spec.rb"
 end
+# Spec::Rake::SpecTask.new do |t|
+#   t.spec_files = FileList['spec/lib/*_spec.rb'] # + FileList['spec/helper/*_spec.rb']
+# end
 
 desc 'Generate documentation for the flotomatic plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|

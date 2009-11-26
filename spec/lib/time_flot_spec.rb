@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'activesupport'
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'time_flot')
 
 TimeRec = Struct.new(:day, :count)
 
