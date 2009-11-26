@@ -37,14 +37,15 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
   <% end %>
 =end
 module FlotHelper
-  
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
   #
-  def flot_includes
+  def flot_includes(no_conflict = false)
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
   	  <!--[if IE]> #{javascript_include_tag('excanvas.pack.js')} </script><![endif]-->
-      #{javascript_include_tag('jquery', 'jquery-ui', 'jquery.flot.pack.js', 'flotomatic')}
+      #{javascript_include_tag('jquery')}
+      #{javascript_tag "jQuery.noConflict();" if no_conflict}
+      #{javascript_include_tag('jquery-ui', 'jquery.flot.js', 'flotomatic')}
     EOJS
   end
   
@@ -56,9 +57,9 @@ module FlotHelper
   #
   def flot_canvas(arg, options = {})
     if arg.is_a? Flot
-      content_tag :div, "", options.merge(arg.html_options.merge(:id => arg.placeholder, :class => 'flot_canvas'))
+      content_tag :div, "", options.reverse_merge(arg.html_options.reverse_merge(:id => arg.placeholder, :class => 'flot_canvas'))
     else # arg is the placeholder
-      content_tag :div, "", options.merge(:id => arg, :class => 'flot_canvas')
+      content_tag :div, "", options.reverse_merge(:id => arg, :class => 'flot_canvas')
     end
   end
   

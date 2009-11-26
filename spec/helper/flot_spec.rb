@@ -1,6 +1,8 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
 describe FlotHelper do  
+  include FlotHelper
+  
   before(:each) do
     @class       = "stylin"
     @placeholder = "placeholder"
@@ -13,13 +15,24 @@ describe FlotHelper do
   end
   
   describe "flot_includes" do
-    it "should include the appropriate javascript files" do
-      flot_includes.should match(/jquery\.js/)
-      flot_includes.should match(/jquery\-ui\.js/)
-      flot_includes.should match(/jrails\.js/)
-      flot_includes.should match(/jquery\.flot/)
-      flot_includes.should match(/excanvas/)
+    it "should have a script tag" do
       flot_includes.should have_tag('script')
+    end
+
+    it "should include jquery" do
+      flot_includes.should match(/jquery\.js/)
+    end
+
+    it "should include jquery-ui" do
+      flot_includes.should match(/jquery\-ui\.js/)
+    end
+
+    it "should include jquery.flot" do
+      flot_includes.should match(/jquery\.flot/)
+    end
+
+    it "should include excanvas" do
+      flot_includes.should match(/excanvas/)
     end
   end
   
@@ -36,40 +49,48 @@ describe FlotHelper do
       flot = Flot.new("placeholder", :class => 'stylin')
       flot_canvas(flot).should have_tag('div[id=?][class=?]', flot.placeholder, 'stylin')
     end
-  
+    
+    it "should also overide the object with a passed in class" do
+      flot = Flot.new("placeholder", :class => 'stylin')
+      flot_canvas(flot, :class => 'profilin').should have_tag('div[id=?][class=?]', flot.placeholder, 'profilin')
+    end
   end
 
   describe "flot_graph" do
-    it "should generate javascript with the appropriate ready function" do
-      flot_graph(@placeholder, @flot).should have_tag('script[type=?]', 'text/javascript')
-      flot_graph(@placeholder, @flot).should match(/\$\(function\(\)\s*\{/)
-      flot_graph(@placeholder, @flot).should match(/\}\s*\)\s*;/)
+    describe "ready function" do
+      it "should be a javascript script" do
+        flot_graph(@placeholder, @flot).should have_tag('script[type=?]', 'text/javascript')
+        flot_graph(@placeholder, @flot).should match(/\}\s*\)\s*;/)
+      end
+
+      it "should generate generate ready function (no conflict with prototype)" do
+        flot_graph(@placeholder, @flot).should match(/jQuery\(function\(\)\s*\{/)
+      end
+    end
+
+    describe "javascript variables" do
+      it "should set data" do
+        flot_graph(@placeholder, @flot).should =~ /var\s+data\s*=\s*#{@data}\s*;/
+      end
+
+      it "should set options" do
+        flot_graph(@placeholder, @flot).should =~ /var\s+options\s*=\s*#{@options}\s*;/
+      end
+
+      it "should set flotomatic" do
+        flot_graph(@placeholder, @flot).should =~ /var\s+flotomatic\s*=\s*new\s+Flotomatic\('#{@placeholder}',\s*data\s*,\s*options\s*\)\s*;/
+      end
     end
     
-    it "should set the data, options, and placeholder variables" do
-      flot_graph(@placeholder, @flot).should =~ /var\s+data\s*=\s*#{@data}\s*;/
-      flot_graph(@placeholder, @flot).should =~ /var\s+options\s*=\s*#{@options}\s*;/
-      flot_graph(@placeholder, @flot).should =~ /var\s+placeholder\s*=\s*\$\("\##{@placeholder}"\)\s*;/
-    end
-    
-    it "should call the plot function with appropriate arguments" do
-      flot_graph(@placeholder, @flot).should =~  /var\s+plot\s+=\s+\$\.plot\(placeholder\s*,\s*data\s*,\s*options\s*\);/
-    end
-    
-    it "should evaluate a block and pass it through to the end of the javascript" do
-      _erbout = ''
-      flot_graph(@placeholder, @flot) { _erbout.concat "// My favorite number is #{3 + 4}" }.should =~ /My favorite number is 7/
-    end
-  end
-  
-  describe "flot_tooltip" do
-    before(:each) do
-      _erbout = ""
-    end
-    it "should generate the tooltip call" do
-    end
-    it "should use the placeholder set in flot_graph" do
-      flot_graph(@placeholder, @flot) { puts instance_variable_get(@placeholder) }
+    describe "evaluating a blog" do
+      it "should pass it through to the end of the javascript" do
+        _erbout = ''
+        flot_graph(@placeholder, @flot) { _erbout.concat "// My favorite number is #{3 + 4}" }.should =~ /My favorite number is 7/
+      end
+
+      it "should output the plot javascript function with appropriate arguments" do
+        flot_graph(@placeholder, @flot) { flot_plot }.should =~  /flotomatic\.graph\(\)/
+      end
     end
   end
 end

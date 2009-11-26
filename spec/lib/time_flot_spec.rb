@@ -1,5 +1,4 @@
-require 'activesupport'
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'time_flot')
+require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
 TimeRec = Struct.new(:day, :count)
 
@@ -35,8 +34,7 @@ describe "TimeFlot" do
       flot = TimeFlot.new(:yaxis)
       flot.series_for("Time Plot", @collection, :x => :count, :y => :day)
       flot.options[:yaxis][:mode].should == 'time'
-      flot.is_time_axis?(:yaxis).should_not be_false
-      flot.is_time_axis?(:xaxis).should_not be_true
+      flot.is_time_axis?(:yaxis).should be_true
     end
   end
 end
