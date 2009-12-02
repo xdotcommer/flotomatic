@@ -45,7 +45,7 @@ module FlotHelper
   	  <!--[if IE]> #{javascript_include_tag('excanvas.pack.js')} </script><![endif]-->
       #{javascript_include_tag('jquery')}
       #{javascript_tag "jQuery.noConflict();" if no_conflict}
-      #{javascript_include_tag('jquery-ui', 'jquery.flot.js', 'flotomatic')}
+      #{javascript_include_tag('jquery-ui', 'jquery.flot.pack.js', 'flotomatic')}
     EOJS
   end
   
