@@ -39,13 +39,13 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
 module FlotHelper
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
   #
-  def flot_includes(no_conflict = false)
+  def flot_includes(options = {:include_jquery => true, :no_conflict => false})
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
-  	  <!--[if IE]> #{javascript_include_tag('excanvas.pack.js')} </script><![endif]-->
-      #{javascript_include_tag('jquery')}
-      #{javascript_tag "jQuery.noConflict();" if no_conflict}
-      #{javascript_include_tag('jquery-ui', 'jquery.flot.js', 'flotomatic')}
+  	  <!--[if IE]> #{javascript_include_tag('excanvas.min.js')} </script><![endif]-->
+      #{javascript_include_tag('jquery') if options[:include_jquery]}
+      #{javascript_tag "jQuery.noConflict();" if options[:no_conflict]}
+      #{javascript_include_tag('jquery.flot.min.js', 'flotomatic')}
     EOJS
   end
   
@@ -94,7 +94,8 @@ module FlotHelper
   #     // with access to the flotomatic variable
   #   <% end %>
   #
-  def flot_graph(placeholder, flot, &block)
+  def flot_graph(placeholder = nil, flot, &block)
+    placeholder = flot.placeholder unless placeholder
     graph = javascript_tag <<-EOJS
       jQuery(function() {
         var data        = #{flot.data.to_json};
