@@ -1,5 +1,5 @@
 require 'flot'
 require 'time_flot'
+require File.join(directory, 'app', 'helpers', 'flot_helper')
 
-$LOAD_PATH << File.join(directory, 'app', 'helpers')
-ActiveSupport::Dependencies.load_paths << File.join(directory, 'app', 'helpers')
+ActionView::Base.send :include, ::FlotHelper
