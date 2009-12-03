@@ -8,8 +8,8 @@ class FlotomaticGenerator < Rails::Generator::Base # :nodoc:
       m.file 'flotomatic.css', "public/stylesheets/flotomatic.css"
       m.file 'flotomatic.js',  "public/javascripts/flotomatic.js"
       m.file 'jquery.js', "public/javascripts/jquery.js"
-      m.file 'jquery.flot.pack.js', "public/javascripts/jquery.flot.pack.js"
-      m.file 'excanvas.pack.js', "public/javascripts/excanvas.pack.js"
+      m.file 'jquery.flot.min.js', "public/javascripts/jquery.flot.min.js"
+      m.file 'excanvas.min.js', "public/javascripts/excanvas.min.js"
     end
   end
 end
