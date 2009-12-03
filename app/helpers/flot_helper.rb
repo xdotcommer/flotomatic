@@ -94,8 +94,7 @@ module FlotHelper
   #     // with access to the flotomatic variable
   #   <% end %>
   #
-  def flot_graph(placeholder = nil, flot, &block)
-    placeholder = flot.placeholder unless placeholder
+  def flot_graph(placeholder, flot, &block)
     graph = javascript_tag <<-EOJS
       jQuery(function() {
         var data        = #{flot.data.to_json};
