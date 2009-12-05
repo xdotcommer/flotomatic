@@ -122,7 +122,7 @@ Examples:
   
 private
   def series_options
-    @options.select {|k,v| SERIES_OPTIONS.include?(k.to_s)}
+    @options.reject {|k,v| SERIES_OPTIONS.include?(k.to_s) == false}
   end
 
   def map_collection(collection, x, y)
