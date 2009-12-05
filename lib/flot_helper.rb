@@ -47,9 +47,9 @@ module FlotHelper
   	  <!--[if IE]> #{javascript_include_tag('excanvas.min.js')} </script><![endif]-->
       #{javascript_include_tag('flotomatic/jquery.min.js') if options[:jquery]}
       #{javascript_tag "jQuery.noConflict();" if options[:no_conflict]}
-      #{javascript_include_tag('jquery.flot.min.js')}
+      #{javascript_include_tag('flotomatic/jquery.flot.min.js')}
       #{flot_extra_javascripts if options[:include_all]}
-      #{javascript_include_tag('flotomatic')}
+      #{javascript_include_tag('flotomatic/flotomatic')}
     EOJS
   end
   
