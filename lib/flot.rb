@@ -10,6 +10,8 @@ It's primary purpose is to contain the data that is used in the flot graph.
 =end
 class Flot
   CANVAS_DEFAULT_HTML_OPTIONS = {:style => "height: 300px"}
+  SERIES_OPTIONS = %w(lines points bars shadowSize colors)
+  
   attr_accessor :data, :options, :placeholder, :html_options
   alias  :canvas :placeholder
   alias  :canvas= :placeholder=
@@ -112,13 +114,17 @@ Examples:
   #
   def series(label, d, opts = {})
     if opts.blank?
-      @data << @options.merge(:label => label, :data => d)
+      @data << series_options.merge(:label => label, :data => d)
     else
       @data << opts.merge(:label => label, :data => d)
     end
   end
   
 private
+  def series_options
+    @options.select {|k,v| SERIES_OPTIONS.include?(k.to_s)}
+  end
+
   def map_collection(collection, x, y)
     col = @collection_filter ? @collection_filter.call(collection) : collection
     col.map {|model| [get_coordinate(model, x), get_coordinate(model, y)]}
