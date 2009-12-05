@@ -21,7 +21,9 @@ The following rake tasks are also available:
 
 == Example
 
-Please note this is just an example.  It assumes a couple of collections have been created (@journals, @migraines) with very specific attributes on them.  For a working example see the walk through here:
+Please note this is not intended to be a complete working an example.  It's purpose is only to illustrate some of what you can do through the API.  
+
+It assumes a couple of collections have been created (@journals, @migraines) with very specific attributes on them.  For a working example see the walk through here:
 http://xdotcommer.wordpress.com/2009/11/30/flotomatic-a-new-graphing-plugin-for-rails/
 
 === Controller
