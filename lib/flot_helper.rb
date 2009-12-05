@@ -37,15 +37,19 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
   <% end %>
 =end
 module FlotHelper
+  FLOT_EXTRA_JS = %w(jquery.colorhelpers.min.js jquery.flot.crosshair.min.js jquery.flot.image.min.js jquery.flot.min.js jquery.flot.navigate.js jquery.flot.navigate.min.js jquery.flot.selection.min.js jquery.flot.stack.min.js jquery.flot.threshold.min.js)
+  
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
   #
-  def flot_includes(options = {:include_jquery => true, :no_conflict => false})
+  def flot_includes(options = {:jquery => true, :no_conflict => false, :include_all => false})
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
   	  <!--[if IE]> #{javascript_include_tag('excanvas.min.js')} </script><![endif]-->
-      #{javascript_include_tag('jquery') if options[:include_jquery]}
+      #{javascript_include_tag('flotomatic/jquery.min.js') if options[:jquery]}
       #{javascript_tag "jQuery.noConflict();" if options[:no_conflict]}
-      #{javascript_include_tag('jquery.flot.min.js', 'flotomatic')}
+      #{javascript_include_tag('jquery.flot.min.js')}
+      #{flot_extra_javascripts if options[:include_all]}
+      #{javascript_include_tag('flotomatic')}
     EOJS
   end
   
@@ -148,5 +152,9 @@ module FlotHelper
     else
       start + "flotomatic.tooltipFormatter" + finish;
     end
+  end
+  
+  def flot_extra_javascripts
+    javascript_include_tag(*FLOT_EXTRA_JS.map {|file| "flotomatic/#{file}"})
   end
 end
