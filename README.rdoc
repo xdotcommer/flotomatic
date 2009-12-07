@@ -26,6 +26,8 @@ Please note this is not intended to be a complete working an example.  It's purp
 It assumes a couple of collections have been created (@journals, @migraines) with very specific attributes on them.  For a working example see the walk through here:
 http://xdotcommer.wordpress.com/2009/11/30/flotomatic-a-new-graphing-plugin-for-rails/
 
+I've recently included a working example in the project under the example directory.  Just start up script/server in the example/ subdirectory and navigate to http://localhost:3000/flotomatic
+
 === Controller
 
   @flot = TimeFlot.new('graph') do |f|
