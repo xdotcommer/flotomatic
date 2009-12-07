@@ -6,6 +6,15 @@ class FlotomaticController < ApplicationController
     end
   end
   
+  def time
+    @flot = TimeFlot.new('graph') do |f|
+      f.xaxis(:mode => 'time')
+      f.points
+      f.series("Evens", [[1.week.ago, 2], [1.day.ago, 4], [Time.now, 6], [1.day.from_now, 8]])
+      f.series("Odds",  [[1.week.ago, 1], [Date.yesterday, 3], [Date.today, 5], [Date.tomorrow, 7]])
+    end
+  end
+  
   def graph_types
     @flot = Flot.new('graph') do |f|
       f.series("Lines with Fill", (1..14).map {|n| [n, Math.sin(n)]}, :lines => {:show => true, :fill => true})

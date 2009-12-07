@@ -44,6 +44,10 @@ class TimeFlot < Flot
     @options[:bars] = opts
   end
   
+  def series(label, d, opts = {})
+    super label, d.map {|pair| is_time_axis?(:xaxis) ? [TimeFlot.js_time_from(pair[0]), pair[1]] : [pair[0], TimeFlot.js_time_from(pair[1])]}, opts
+  end
+
   # Sets up a time series based on a collection:
 	#   tf.series_for("Temperature", @temps, :x => :created_on, :y => :temperature, :color => '#ff0')
 	#
