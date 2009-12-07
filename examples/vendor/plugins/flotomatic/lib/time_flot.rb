@@ -51,14 +51,6 @@ class TimeFlot < Flot
   # Sets up a time series based on a collection:
 	#   tf.series_for("Temperature", @temps, :x => :created_on, :y => :temperature, :color => '#ff0')
 	#
-	def series_for(label, collection, opts)
-	  if is_time_axis? :xaxis
-	    opts[:x] = convert_to_js_time(opts[:x]) #changes the contents of hash passed in
-	  else
-	    opts[:y] = convert_to_js_time(opts[:y])
-    end
-	  super label, collection, opts
-	end
 	
 private
 

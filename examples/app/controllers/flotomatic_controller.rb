@@ -1,4 +1,7 @@
 class FlotomaticController < ApplicationController
+  Rating = Struct.new(:time, :value)
+  Vote   = Struct.new(:time, :value)
+
   def basic
     @flot = Flot.new('graph') do |f|
       f.series("Line One", [[1,9], [2,18], [3,36]])
@@ -15,6 +18,18 @@ class FlotomaticController < ApplicationController
     end
   end
   
+  def collection
+   @ratings = [ Rating.new(Date.yesterday, 3), Rating.new(Date.today, 10), Rating.new(Date.tomorrow, 5) ]
+   @votes   = [ Vote.new(Date.yesterday, 13), Vote.new(Date.today, 8), Vote.new(Date.tomorrow, 9) ]
+    
+    @flot = TimeFlot.new('graph') do |f|
+      f.xaxis(:mode => 'time')
+      f.bars
+      f.series_for("Ratings", @ratings, :x => :time, :y => :value)
+      f.series_for("Votes", @votes, :x => :time, :y => lambda { |vote| vote.value * 2})
+    end
+  end 
+
   def graph_types
     @flot = Flot.new('graph') do |f|
       f.series("Lines with Fill", (1..14).map {|n| [n, Math.sin(n)]}, :lines => {:show => true, :fill => true})
