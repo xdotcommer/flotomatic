@@ -10,20 +10,19 @@ class FlotomaticController < ApplicationController
   end
   
   def time
-    @flot = TimeFlot.new('graph') do |f|
-      f.xaxis(:mode => 'time')
+    @flot = TimeFlot.new(:yaxis) do |f|
       f.points
-      f.series("Evens", [[1.week.ago, 2], [1.day.ago, 4], [Time.now, 6], [1.day.from_now, 8]])
-      f.series("Odds",  [[1.week.ago, 1], [Date.yesterday, 3], [Date.today, 5], [Date.tomorrow, 7]])
+      f.series("Evens", [[2, 1.week.ago], [4, 1.day.ago], [6, Time.now], [8, 1.day.from_now]])
+      f.series("Odds",  [[1, 1.week.ago], [3, Date.yesterday], [5, Date.today], [7, Date.tomorrow]])
     end
   end
   
   def collection
-   @ratings = [ Rating.new(Date.yesterday, 3), Rating.new(Date.today, 10), Rating.new(Date.tomorrow, 5) ]
-   @votes   = [ Vote.new(Date.yesterday, 13), Vote.new(Date.today, 8), Vote.new(Date.tomorrow, 9) ]
+    @ratings = [ Rating.new(Date.yesterday, 3), Rating.new(Date.today, 10), Rating.new(Date.tomorrow, 5) ]
+    @votes   = [ Vote.new(Date.yesterday, 13), Vote.new(Date.today, 8), Vote.new(Date.tomorrow, 9) ]
     
-    @flot = TimeFlot.new('graph') do |f|
-      f.xaxis(:mode => 'time')
+    # defaults to :xaxis
+    @flot = TimeFlot.new() do |f|
       f.bars
       f.series_for("Ratings", @ratings, :x => :time, :y => :value)
       f.series_for("Votes", @votes, :x => :time, :y => lambda { |vote| vote.value * 2})
