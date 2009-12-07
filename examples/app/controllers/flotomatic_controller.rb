@@ -15,12 +15,30 @@ class FlotomaticController < ApplicationController
     end
   end
   
+  def stacked
+    @flot = Flot.new('graph') do |f|
+      f.stack
+      f.bars
+      f.series('Plus 5', (1..9).map {|i| [i, i + 5]})
+      f.series('Times 2', (1..9).map {|i| [i, i * 2]})
+    end
+  end
+  
   def options
     @flot = Flot.new('graph') do |f|
       f.lines
       f.points
       f.grid(:background_color => {:colors => ['#f00', '#00f']})
       f.xaxis(:ticks => [[1, "One"], [2, "Two"], [3, "Three"]])
+      f.series("One", [[1,1], [2,2], [3,3]])
+      f.series("Two", [[1,2], [2,4], [3,6]])
+      f.series("Three", [[1,3], [2,6], [3,9]])
+    end
+  end
+  
+  def checkboxes
+    @flot = Flot.new('graph') do |f|
+      f.lines(:show => true, :fill => true)
       f.series("One", [[1,1], [2,2], [3,3]])
       f.series("Two", [[1,2], [2,4], [3,6]])
       f.series("Three", [[1,3], [2,6], [3,9]])
