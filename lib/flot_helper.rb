@@ -111,7 +111,7 @@ module FlotHelper
     EOJS
     
     return graph unless block_given?
-    concat graph, block.binding
+    concat graph
   end
   
   # Plot the actual graph (to be called within the flot_graph block)
@@ -146,9 +146,9 @@ module FlotHelper
   def flot_tooltip(&block)
     start, finish = "flotomatic.createTooltip(", ");"
     if block_given?
-      concat start, block.binding
+      concat start
       block.call
-      concat finish, block.binding
+      concat finish
     else
       start + "flotomatic.tooltipFormatter" + finish;
     end
