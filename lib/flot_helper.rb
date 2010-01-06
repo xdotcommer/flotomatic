@@ -111,7 +111,7 @@ module FlotHelper
     EOJS
     
     return graph unless block_given?
-    concat graph
+    safe_concat graph, block.binding
   end
   
   # Plot the actual graph (to be called within the flot_graph block)
@@ -146,9 +146,9 @@ module FlotHelper
   def flot_tooltip(&block)
     start, finish = "flotomatic.createTooltip(", ");"
     if block_given?
-      concat start
+      safe_concat start, block.binding
       block.call
-      concat finish
+      safe_concat finish, block.binding
     else
       start + "flotomatic.tooltipFormatter" + finish;
     end
@@ -156,5 +156,16 @@ module FlotHelper
   
   def flot_extra_javascripts
     javascript_include_tag(*FLOT_EXTRA_JS.map {|file| "flotomatic/#{file}"})
+  end
+
+  # ActionView::Helpers::TextHelper::concat has different arity in
+  # Rails 2.2.0 and later; pick the right implementation based on the
+  # current Rails version to avoid a warning.
+  def safe_concat(s, binding)
+    if Rails::VERSION::STRING >= "2.2.0"
+      concat(s)
+    else
+      concat(s, binding)
+    end
   end
 end
