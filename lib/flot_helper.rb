@@ -44,7 +44,7 @@ module FlotHelper
   def flot_includes(options = {:jquery => true, :no_conflict => false, :include_all => false})
     return <<-EOJS
       #{stylesheet_link_tag 'flotomatic'}
-  	  <!--[if IE]> #{javascript_include_tag('excanvas.min.js')} </script><![endif]-->
+  	  <!--[if IE]> #{javascript_include_tag('flotomatic/excanvas.min.js')} </script><![endif]-->
       #{javascript_include_tag('flotomatic/jquery.min.js') if options[:jquery]}
       #{javascript_tag "jQuery.noConflict();" if options[:no_conflict]}
       #{javascript_include_tag('flotomatic/jquery.flot.min.js')}
