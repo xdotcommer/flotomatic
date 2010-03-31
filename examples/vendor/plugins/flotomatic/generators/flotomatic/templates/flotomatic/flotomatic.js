@@ -72,7 +72,9 @@ Flotomatic.prototype = {
 			i        	= 0;
 
 		jQuery.each(data, function(key, val) {
-			val.color = i;
+      if (val.color == null) {
+        val.color = i;
+      }
 			++i;
 		});
 
