@@ -38,7 +38,7 @@ flot_overview just creates the div to hold the smaller the zoom in / out graph.
 =end
 module FlotHelper
   FLOT_EXTRA_JS = %w(jquery.colorhelpers.min.js jquery.flot.crosshair.min.js jquery.flot.image.min.js jquery.flot.min.js jquery.flot.navigate.js jquery.flot.navigate.min.js jquery.flot.selection.min.js jquery.flot.stack.min.js jquery.flot.threshold.min.js)
-  
+
   # Includes the 'flotomatic' stylesheet, jquery, and flotomatic javascript files
   #
   def flot_includes(options = {:jquery => true, :no_conflict => false, :include_all => false})
@@ -52,7 +52,7 @@ module FlotHelper
       #{javascript_include_tag('flotomatic/flotomatic')}
     EOJS
   end
-  
+
   # Creates the canvas div:
   #
   #   flot_canvas("graph")    # creates a canvas div with an id of "graph"
@@ -66,7 +66,7 @@ module FlotHelper
       content_tag :div, "", options.reverse_merge(:id => arg, :class => 'flot_canvas')
     end
   end
-  
+
   # Creates a div to contain the selection checkboxes (to pick the datasets to be display dynamically)
   #
   #   flot_selections(:id => 'flot_choices', :class => 'selectiony')  # :id is 'flot_choices' by default
@@ -75,14 +75,14 @@ module FlotHelper
   #++
   #
   def flot_selections(options = {})
-    # choices = flot.data.map do |dataset| 
+    # choices = flot.data.map do |dataset|
     #   label = content_tag :label, dataset[:label], :for => dataset[:label]
     #   input = content_tag :input, label, :type => 'checkbox', :name => dataset[:label], :checked => 'checked'
     #   '<br/>' + input
     # end
     content_tag :div, '', options.merge(:id => "flot_choices")
   end
-  
+
   # Creates a ready function that creates a new Flotomatic object (Object-oriented flot wrapper)
   # Takes a block which can contain Javascript code and/or calls to flotomatic helper methods
   #
@@ -104,16 +104,16 @@ module FlotHelper
         var data        = #{flot.data.to_json};
         var options     = #{flot.options.to_json};
         var flotomatic  = new Flotomatic('#{placeholder}', data, options);
-        
+
         // Custom Javascript provided in block to flot_graph
         #{capture(&block) if block_given?}
       });
     EOJS
-    
+
     return graph unless block_given?
     safe_concat graph, block.binding
   end
-  
+
   # Plot the actual graph (to be called within the flot_graph block)
   #
   # Options:
@@ -126,34 +126,62 @@ module FlotHelper
       #{'flotomatic.graphOverview();' if options[:overview]}
     EOJS
   end
-  
+
   # Create the small overview div for zooming in and out
   #
   def flot_overview(text = '', options = {})
     content_tag(:div, text, options.merge(:id => 'flot_overview', :class => 'flot_overview'))
   end
-  
+
   # Register a tooltip for data points
   #
-  #   <%= flot_tooltip %>     # use the default tooltip
-  #   <% flot_tooltip do %>   # use custom content in the tooltip
-  #     My Mouseover Message!  // could use javascript here to access the flotomatic variable
-  #   <% end %>
-  #--
-  # TODO: specs, different defaults based on time axis
-  #++
+  #   <%= flot_tooltip %>
   #
-  def flot_tooltip(&block)
-    start, finish = "flotomatic.createTooltip(", ");"
-    if block_given?
-      safe_concat start, block.binding
-      block.call
-      safe_concat finish, block.binding
-    else
-      start + "flotomatic.tooltipFormatter" + finish;
-    end
+  # By default this will create a default tooltip.  The flot data array has been extended to accept a 3rd element in the array for a
+  # custom tooltip.  If you want a custom tool tip, pass in the tooltip string when creating your series.
+  #
+  #   f.series(name.titleize, [1,21,'Custom tool tip message')
+  #
+  # Or if you have a collection of data objects, use series for and tell it which attribute has the tooltip string.
+  #
+  #   f.series_for(name.titleize, records, :x => :time, :y => :value, :tooltip => :tooltip)
+  #
+  # Be sure to set the hoverable option to true for the series you want the tool tip for
+  #
+  #   f.series_for(name.titleize, records, :x => :time, :y => :value, :tooltip => :tooltip, :link_url => :link_url, :grid => {:hoverable => true})
+  #
+  # or globally if you want the tooltip on all data points in all series.
+  #
+  #   f.grid :hoverable => true
+  # TODO: specs, different defaults based on time axis
+  def flot_tooltip
+    "flotomatic.createTooltip();"
   end
-  
+
+  # Register a link for data points
+  #
+  #   <%= flot_link %>
+  #
+  # This will create a link using the url you pass in to the 4th element of the flot data array.  The flot data arrray has been extended to accept a 4th element in the array for a
+  # custom link.
+  #
+  #   f.series(name.titleize, [1,21,'Custom tool tip message', url_for(:controller => :people, :action=> :profile, :id => person_id))
+  #
+  # Or if you have a collection of data objects, use series for and tell it which attribute has the url.
+  #
+  #   f.series_for(name.titleize, records, :x => :time, :y => :value, :tooltip => :tooltip, :link_url l=> :link_url)
+  #
+  # Be sure to set the clickable option to true for the series you want the link for
+  #
+  #   f.series_for(name.titleize, records, :x => :time, :y => :value, :tooltip => :tooltip, :link_url => :link_url, :grid => {:clickable => true})
+  #
+  # or globally if you want the link on all data points in all series.
+  #
+  #   f.grid :clickable => true
+  def flot_link
+    "flotomatic.createLink()"
+  end
+
   def flot_extra_javascripts
     javascript_include_tag(*FLOT_EXTRA_JS.map {|file| "flotomatic/#{file}"})
   end
