@@ -25,13 +25,13 @@ class TimeFlot < Flot
 
   # TODO: need a way to replot, do hover overs, etc.
   # TODO: don't like the way it overrides the initialize method signature
-  
+
   # Create a new TimeFlot object with a default time_axis of :xaxis
   #   TimeFlot.new do |tf|
   #     tf.bars  # default width is equal to 1 day
   #     tf.series_for("Temperature", @temps, :x => :created_on, :y => :temperature)
   #   end
-  # 
+  #
   def initialize(time_axis = :xaxis, &block)
     @options ||= {}
     time_axis(time_axis)
@@ -43,9 +43,9 @@ class TimeFlot < Flot
   def bars(opts = {:show => true, :barWidth => BAR_WIDTH, :align => "center"})
     @options[:bars] = opts
   end
-  
+
   def series(label, d, opts = {})
-    super label, d.map {|pair| is_time_axis?(:yaxis) ? [pair[0], TimeFlot.js_time_from(pair[1])] : [TimeFlot.js_time_from(pair[0]), pair[1]]}, opts
+    super label, d.map {|data| is_time_axis?(:yaxis) ? [data[0], TimeFlot.js_time_from(data[1]), data[2], data[3]] : [TimeFlot.js_time_from(data[0]), data[1], data[2], data[3]]}, opts
   end
 
   # Sets up a time series based on a collection:
@@ -57,28 +57,28 @@ private
     [:xaxis, :yaxis].each {|ax| return if is_time_axis?(ax)}
     merge_options axis, {:mode => "time"}
   end
-  
+
   def is_time_axis?(axis)
     options[axis] && (options[axis][:mode] == "time")
   end
-  
+
   def convert_to_js_time(method)
     return method if method.is_a?(Proc)
     lambda {|model|  TimeFlot.js_time_from model.send(method) }
   end
-  
+
   def self.js_time_from(date)
     date.to_time.to_i * JS_TIME_MULTIPLIER
   end
-  
+
   def build_time_series(collection, x, y, x_transform, y_transform)
     collection.map do |model|
       [transform(model, x, x_transform), transform(model, y, y_transform)]
     end
   end
-  
+
   def transform(model, method, transformation)
     transformation ? transformation.call(model.send(method)) : model.send(method)
   end
-  
+
 end

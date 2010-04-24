@@ -1,133 +1,177 @@
-function Flotomatic(placeholder, data, options) {	
-	this.placeholder  = '#' + placeholder;
-	this.tooltip      = '#flot_tooltip';
-	this.overview     = '#flot_overview';
-	this.choices      = '#flot_choices';
-	this.data         = data;
-	this.options      = options;
-	this.plot         = null;
-	this.overviewPlot = null;
+function Flotomatic(placeholder, data, options) {
+    this.placeholder  = '#' + placeholder;
+    this.tooltip      = '#flot_tooltip';
+    this.overview     = '#flot_overview';
+    this.choices      = '#flot_choices';
+    this.data         = data;
+    this.options      = options;
+    this.plot         = null;
+    this.overviewPlot = null;
 }
 
 Flotomatic.prototype = {
-	createTooltip: function(tooltipFormatter) {
-		var placeholder = jQuery(this.placeholder),
-		tooltip         = jQuery(this.tooltip),
-		previousPoint   = null;
+    createLink: function() {
+        var placeholder = jQuery(this.placeholder);
+
+        placeholder.bind("plotclick", function(event, pos, item) {
+            var series = item.series,
+            dataIndex = item.dataIndex;
+
+            window.open(series.data[dataIndex][3]);
+        });
+    },
+
+    createTooltip: function() {
+        var placeholder = jQuery(this.placeholder),
+        tooltip         = jQuery(this.tooltip),
+        previousPoint   = null;
 
 
-		function showTooltip(x, y, contents) {
-			jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css( 
-				{top: y + 5, left: x + 5}).appendTo("body").fadeIn(200);
-		}
+        function showTooltip(x, y, contents) {
+            jQuery('<div id="flot_tooltip" class="flotomatic_tooltip">' + contents + '</div>').css(
+            {
+                top: y + 5,
+                left: x + 5
+            }).appendTo("body").fadeIn(200);
+        }
 
-		function tooltipFormatter(item) {
-			var date 	 = new Date(item.datapoint[0]),
-				label    = item.series.label;
+        function tooltipFormatter(item) {
+            var date 	 = new Date(item.datapoint[0]),
+            label    = item.series.label,
+            series = item.series,
+            dataIndex = item.dataIndex,
+            content = "";
 
-			return label + ": " + item.datapoint[1] + " on " + (date.getMonth() + 1) + "/" + date.getDate() + "</a>";
-		}
+            if (series.data[dataIndex][2] == null){
+                content = label + ": " + item.datapoint[1] + " on " + (date.getMonth() + 1) + "/" + date.getDate() + "</a>";
+            }
+            else {
+                content = series.data[dataIndex][2];
+            }
 
-		placeholder.bind("plothover", this.tooltip, function(event, pos, item) {
-			var tooltip = jQuery(event.data);
 
-			if (item) {
-				if (previousPoint != item.datapoint) {
-					previousPoint = item.datapoint;
+            return content;
+        }
 
-					tooltip.remove();
-					var x = item.datapoint[0],//.toFixed(2),
-					y = item.datapoint[1];
+        placeholder.bind("plothover", this.tooltip, function(event, pos, item) {
+            var tooltip = jQuery(event.data);
 
-					showTooltip(item.pageX, item.pageY, tooltipFormatter(item));
-				}
-			}
-			else {
-				tooltip.remove();
-				previousPoint = null;            
-			}
-		});
-	},
-	
-	draw: function(placeholder, data, initialOptions, ranges, dynamic, zoom) {
-		var options = initialOptions;
-		
-		if (zoom)
-			options = jQuery.extend(true, {}, options, { selection: { mode: "x" }, xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }});
-		
-		return jQuery.plot(placeholder, data, options);
-	},
+            if (item) {
+                if (previousPoint != item.datapoint) {
+                    previousPoint = item.datapoint;
 
-	graph: function(overview, dynamic) {
-		var placeholder = jQuery(this.placeholder);
+                    tooltip.remove();
+                    var x = item.datapoint[0],//.toFixed(2),
+                    y = item.datapoint[1]
 
-		this.plot = this.draw(placeholder, this.data, this.options);
-	},
+                    showTooltip(item.pageX, item.pageY, tooltipFormatter(item));
+                }
+            }
+            else {
+                tooltip.remove();
+                previousPoint = null;
+            }
+        });
+    },
 
-	graphDynamic: function() {
-		var placeholder = jQuery(this.placeholder),
-			choices     = jQuery(this.choices),
-			options     = this.options,
-			data        = this.data,
-			i        	= 0;
+    draw: function(placeholder, data, initialOptions, ranges, dynamic, zoom) {
+        var options = initialOptions;
 
-		jQuery.each(data, function(key, val) {
-      if (val.color == null) {
-        val.color = i;
-      }
-			++i;
-		});
+        if (zoom)
+            options = jQuery.extend(true, {}, options, {
+                selection: {
+                    mode: "x"
+                },
+                xaxis: {
+                    min: ranges.xaxis.from,
+                    max: ranges.xaxis.to
+                }
+            });
 
-		jQuery.each(data, function(key, val) {
-			choices.append(choiceFormatter(key, val));
-		});
+        return jQuery.plot(placeholder, data, options);
+    },
 
-		choices.find("input").click(graphChoices);
+    graph: function(overview, dynamic) {
+        var placeholder = jQuery(this.placeholder);
 
-		function graphChoices() {
-			var set = [];
+        this.plot = this.draw(placeholder, this.data, this.options);
+    },
 
-			choices.find("input:checked").each(function () {
-				var key = jQuery(this).attr("name");
-				
-				if (key && data[key])
-					set.push(data[key]);
-			});
+    graphDynamic: function() {
+        var placeholder = jQuery(this.placeholder),
+        choices     = jQuery(this.choices),
+        options     = this.options,
+        data        = this.data,
+        i        	= 0;
 
-			if (set.length > 0)
-				this.plot = jQuery.plot(placeholder, set, options);
-		}
+        jQuery.each(data, function(key, val) {
+            if (val.color == null) {
+                val.color = i;
+            }
+            ++i;
+        });
 
-		function choiceFormatter(key, val) {
-			return '<input type="checkbox" name="' + key + '" checked="checked" > <span class="flot_choice_label">' + val.label + '</span></input> ';
-		}
+        jQuery.each(data, function(key, val) {
+            choices.append(choiceFormatter(key, val));
+        });
 
-		graphChoices();
-	},
+        choices.find("input").click(graphChoices);
 
-	graphOverview: function() {
-		var overview        = jQuery(this.overview),
-			placeholder 	= jQuery(this.placeholder),
-			plot            = this.plot;
+        function graphChoices() {
+            var set = [];
 
-		this.overviewPlot = jQuery.plot(overview, this.data, {
-			legend: false, 
-			shadowSize: 0, 
-			xaxis: { ticks: [], mode: "time" }, 
-			yaxis: { ticks: [] }, 
-			selection: { mode: "x" }
-		});
+            choices.find("input:checked").each(function () {
+                var key = jQuery(this).attr("name");
 
-		placeholder.bind("plotselected", {that:this}, function (event, ranges) {
-			var that   		= event.data.that,
-				placeholder = jQuery(that.placeholder);
+                if (key && data[key])
+                    set.push(data[key]);
+            });
 
-			that.plot = that.draw(placeholder, that.data, that.options, ranges, false, true);
-			that.overviewPlot.setSelection(ranges, true);
-		});
+            if (set.length > 0)
+                this.plot = jQuery.plot(placeholder, set, options);
+        }
 
-		overview.bind("plotselected", {that:this}, function (event, ranges) {
-			event.data.that.plot.setSelection(ranges);
-		});
-	}   
+        function choiceFormatter(key, val) {
+            return '<input type="checkbox" name="' + key + '" checked="checked" > <span class="flot_choice_label">' + val.label + '</span></input> ';
+        }
+
+        graphChoices();
+    },
+
+    graphOverview: function() {
+        var overview        = jQuery(this.overview),
+        placeholder 	= jQuery(this.placeholder),
+        plot            = this.plot;
+
+        this.overviewPlot = jQuery.plot(overview, this.data, {
+            legend: false,
+            shadowSize: 0,
+            xaxis: {
+                ticks: [],
+                mode: "time"
+            },
+            yaxis: {
+                ticks: []
+            },
+            selection: {
+                mode: "x"
+            }
+        });
+
+        placeholder.bind("plotselected", {
+            that:this
+        }, function (event, ranges) {
+            var that   		= event.data.that,
+            placeholder = jQuery(that.placeholder);
+
+            that.plot = that.draw(placeholder, that.data, that.options, ranges, false, true);
+            that.overviewPlot.setSelection(ranges, true);
+        });
+
+        overview.bind("plotselected", {
+            that:this
+        }, function (event, ranges) {
+            event.data.that.plot.setSelection(ranges);
+        });
+    }
 }

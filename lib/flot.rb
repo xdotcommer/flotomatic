@@ -3,7 +3,7 @@
 # License::   Distributed under the same terms as Ruby
 
 =begin rdoc
-== Flot 
+== Flot
 This class acts as a ruby wrapper for the flot javascript object.  It is the class used in your model / controller to setup your data sets.  It is then the object used in the <tt><%= flot_graph %></tt> helper method.
 
 It's primary purpose is to contain the data that is used in the flot graph.
@@ -11,7 +11,7 @@ It's primary purpose is to contain the data that is used in the flot graph.
 class Flot
   CANVAS_DEFAULT_HTML_OPTIONS = {:style => "height: 300px"}
   SERIES_OPTIONS = %w(lines points bars shadowSize color)
-  
+
   attr_accessor :data, :options, :placeholder, :html_options
   alias  :canvas :placeholder
   alias  :canvas= :placeholder=
@@ -20,11 +20,11 @@ class Flot
 The flot object can be initialized with either a block or a hash of options.  The canvas and placeholder are used interchangeably and is provided as an optional first argument for convenience.
 
 Initialize with a hash:
- Flot.new('graph', :options => {:points => {:show => true}}, 
+ Flot.new('graph', :options => {:points => {:show => true}},
     :data => [
       {:label => 'Male', :data => [[1,0], [2,2]], [3,5]},
       {:label => 'Female', :data => [[1,1], [2,3]], [3,4]}
-    ]) 
+    ])
 
 Initialize with a block:
   Flot.new('graph') do |f|
@@ -41,7 +41,7 @@ Initialize (and then set data & options later):
   f = Flot.new('graph')
   f.line
   f.series "Red Line", [[0,5], [1,5], [2,5]], :color => '#f00'
-  
+
 =end
   def initialize(canvas = nil, html_opts = {})
     # TODO: :tick_formatter => enum / hash or a mapping function, also :tick_formatter => {1 => "Mon", 2 => "Tue", ...} OR if an x or y is a string/sym consider auto conversion --> a TotalFlot? or total_for(@collection, x, y)
@@ -65,8 +65,8 @@ Convenience methods for defaulting the graph to line, point, or bar.  As well as
 Each takes a set of options, which default to :show => true.
 
 Examples:
-  flot.lines 
-  flot.points 
+  flot.lines
+  flot.points
   flot.bars :show => true, :bar_width => 5, :align => 'center'
   flot.legend :no_columns => 2
 
@@ -77,7 +77,7 @@ Examples:
       merge_options(meth, arguments_to_options(args))
     end
   end
-  
+
   # Pass other methods through to the javascript flot object.
   #
   # For instance: <tt>flot.grid(:color => "#699")</tt>
@@ -103,11 +103,11 @@ Examples:
   #   @flot.series_for "Age", people, :x => :id, :y => :age, :options => {:color => '#f00'}
   #
   def series_for(label, collection, opts)
-    series label, map_collection(collection, opts[:x], opts[:y]), opts[:options] || {}
+    series label, map_collection(collection, opts[:x], opts[:y], opts[:tooltip], opts[:link_url]), opts[:options] || {}
   end
-  
+
   # Add a simple series to the graph:
-  # 
+  #
   #   data = [[0,5], [1,5], [2,5]]
   #   @flot.series "Horizontal Line", data
   #   @flot.series "Red Line", data, :color => '#f00'  # or is it "'#f00'"
@@ -119,23 +119,23 @@ Examples:
       @data << opts.merge(:label => label, :data => d)
     end
   end
-  
-private
+
+  private
   def series_options
     @options.reject {|k,v| SERIES_OPTIONS.include?(k.to_s) == false}
   end
 
-  def map_collection(collection, x, y)
+  def map_collection(collection, x, y, tooltip, link_url)
     col = @collection_filter ? @collection_filter.call(collection) : collection
-    col.map {|model| [get_coordinate(model, x), get_coordinate(model, y)]}
+    col.map {|model| [get_coordinate(model, x), get_coordinate(model, y), get_coordinate(model, tooltip), get_coordinate(model, link_url)]}
   end
 
   def merge_options(name, opts)
     @options.merge!  name => opts
   end
-  
+
   def arguments_to_options(args)
-    if args.blank? 
+    if args.blank?
       {:show => true}
     elsif args.is_a? Array
       args.first
@@ -143,8 +143,10 @@ private
       args
     end
   end
-  
+
   def get_coordinate(model, method)
-    method.is_a?(Proc) ? method.call(model) : model.send(method)
+    unless method.nil?
+      method.is_a?(Proc) ? method.call(model) : model.send(method)
+    end
   end
 end
