@@ -20,7 +20,11 @@ describe FlotHelper do
     end
 
     it "should include jquery" do
-      flot_includes.should match(/jquery\.min\.js/)
+      flot_includes.should match(/jquery\.js/)
+    end
+ 
+    it "should include jquery-ui" do
+      flot_includes.should match(/jquery\-ui\.js/)
     end
 
     it "should include jquery.flot" do
@@ -29,10 +33,6 @@ describe FlotHelper do
 
     it "should include excanvas" do
       flot_includes.should match(/excanvas/)
-    end
-
-    it "should include selection when :include => :selection" do
-      flot_includes(:include => :selection).should match(/jquery\.flot\.selection\.min/)
     end
   end
   
