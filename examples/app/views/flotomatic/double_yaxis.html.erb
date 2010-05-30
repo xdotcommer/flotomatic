@@ -1,0 +1,13 @@
+<h1>Flotomatic Double Y Axis Graph</h1>
+
+<p>This is an example of how to use flot & flotomatic to do a time-based graph with double y axis (take a look at the controller for more details). This graph also shows tooltips and relocates the legend position to the south east corner.</p>
+
+<%= flot_includes %>
+
+<%= flot_canvas("graph") %>
+
+<% flot_graph("graph", @flot) do %>
+  <%= flot_plot %>
+	<%= flot_tooltip %>
+<% end %>
+

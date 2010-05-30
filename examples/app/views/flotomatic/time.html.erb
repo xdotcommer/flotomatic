@@ -7,5 +7,7 @@
 <%= flot_canvas("graph") %>
 
 <% flot_graph("graph", @flot) do %>
-   <%= flot_plot %>
+  <%= flot_plot %>
+	<%= flot_tooltip %>
 <% end %>
+

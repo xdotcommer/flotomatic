@@ -12,6 +12,7 @@ class FlotomaticController < ApplicationController
   def time
     @flot = TimeFlot.new(:yaxis) do |f|
       f.points
+      f.grid :hoverable => true      
       f.series("Evens", [[2, 1.week.ago], [4, 1.day.ago], [6, Time.now], [8, 1.day.from_now]])
       f.series("Odds",  [[1, 1.week.ago], [3, Date.yesterday], [5, Date.today], [7, Date.tomorrow]])
     end
@@ -67,4 +68,19 @@ class FlotomaticController < ApplicationController
       f.series("Three", [[1,3], [2,6], [3,9]])
     end
   end
+  
+  def double_yaxis
+    @flot = TimeFlot.new do |f|
+      odds_now = Time.now.beginning_of_day - (1.0/6).day # Fix tick alignment
+      evens_now = odds_now + 0.5.day
+      f.legend  :position => "se"
+      f.bars    :show => true, :align => "center", :barWidth => 0.45.day * TimeFlot::JS_TIME_MULTIPLIER
+      f.grid    :hoverable => true 
+      f.xaxis   :mode => "time", :minTickSize => [1, "day"], :timeformat => "%y/%m/%d"
+      f.yaxis   :max => 8    
+      f.y2axis  :min => 0, :max => 7      
+      f.series("Evens", [[evens_now - 1.day, 4], [evens_now, 6], [evens_now + 1.day, 8]])
+      f.series("Odds",  [[odds_now - 1.day, 3], [odds_now, 5], [odds_now + 1.day, 7]], :yaxis => 2)
+    end    
+  end  
 end
