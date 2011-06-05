@@ -47,7 +47,7 @@ module FlotHelper
   	  <!--[if IE]> #{javascript_include_tag('flotomatic/excanvas.min.js')} </script><![endif]-->
       #{javascript_include_tag('flotomatic/jquery.min.js') if options[:jquery]}
       #{javascript_tag "jQuery.noConflict();" if options[:no_conflict]}
-      #{javascript_include_tag('flotomatic/jquery.flot.min.js')}
+      #{javascript_include_tag('flotomatic/jquery.flot.js')}
       #{javascript_include_tag('flotomatic/jquery.flot.selection.min.js') if options[:include].eql?(:selection)}
       #{flot_extra_javascripts if options[:include_all]}
       #{javascript_include_tag('flotomatic/flotomatic')}
