@@ -101,9 +101,9 @@ module FlotHelper
   def flot_graph(placeholder, flot, &block)
     graph = javascript_tag <<-EOJS
       jQuery(function() {
-        var data        = #{flot.data.to_json};
-        var options     = #{flot.options.to_json};
-        var flotomatic  = new Flotomatic('#{placeholder}', data, options);
+        var #{placeholder}_data        = #{flot.data.to_json};
+        var #{placeholder}_options     = #{flot.options.to_json};
+        var #{placeholder}_flotomatic  = new Flotomatic('#{placeholder}', #{placeholder}_data, #{placeholder}_options);
         
         // Custom Javascript provided in block to flot_graph
         #{capture(&block) if block_given?}
@@ -120,10 +120,10 @@ module FlotHelper
   #   :dynamic => true    # use this option if you are creating a dynamic plot with flot_selections
   #   :overivew => true   # use this option if you want to zoom in & out from a flot_overview
   #
-  def flot_plot(options = {:dynamic => false, :overview => false})
+  def flot_plot(placeholder, options = {:dynamic => false, :overview => false})
     return <<-EOJS
-      #{options[:dynamic] ? "flotomatic.graphDynamic();" : "flotomatic.graph();"}
-      #{'flotomatic.graphOverview();' if options[:overview]}
+      #{options[:dynamic] ? "#{placeholder}_flotomatic.graphDynamic();" : "#{placeholder}_flotomatic.graph();"}
+      #{'#{placeholder}_flotomatic.graphOverview();' if options[:overview]}
     EOJS
   end
   
@@ -143,14 +143,14 @@ module FlotHelper
   # TODO: specs, different defaults based on time axis
   #++
   #
-  def flot_tooltip(&block)
-    start, finish = "flotomatic.createTooltip(", ");"
+  def flot_tooltip(placeholder, &block)
+    start, finish = "#{placeholder}.createTooltip(", ");"
     if block_given?
       concat start, block.binding
       block.call
       concat finish, block.binding
     else
-      start + "flotomatic.tooltipFormatter" + finish;
+      start + "#{placeholder}_flotomatic.tooltipFormatter" + finish;
     end
   end
   
